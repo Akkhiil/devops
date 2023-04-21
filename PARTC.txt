@@ -1,0 +1,102 @@
+#Connect.php
+<?php
+$db_host='localhost';
+$db_user='root';
+$db_passwd=null;
+$db_name="bca";
+$dbh = mysqli_connect($db_host,$db_user,$db_passwd,$db_name)
+or
+die("Error connecting to the database");
+echo"connection is success";
+?>
+
+#testdb.php
+<?php
+include('connect.php');
+
+$query="SELECT * from student1 WHERE cgpa > 6.5";
+$result=mysqli_query($dbh,$query) 
+or
+die ("Error querying the database");
+echo "<br/>";
+echo"fetching success"; 
+echo "<br/>";
+echo "<tr><th>Name</th><th>Roll No</th><th>CGPA</th><th>Branch</th><th>Phone</th><th>Gender</th><th>Email</th></tr>";
+
+while($row = mysqli_fetch_assoc($result))
+{
+    echo "<tr>";
+    echo "<td>".$row['name']."</td>";
+    echo "<td>".$row['rollno']."</td>";
+    echo "<td>".$row['cgpa']."</td>";
+    echo "<td>".$row['branch']."</td>";
+    echo "<td>".$row['phno']."</td>";
+    echo "<td>".$row['gender']."</td>";
+    echo "<td>".$row['email']."</td>";
+    echo "</tr>";
+}
+echo "</table>";
+?>
+
+#dbaction.php
+<?php
+include("connect.php");
+
+$name=$_POST['name'];
+$rollno=$_POST['rollno'];
+$cgpa=$_POST['cgpa'];
+$branch=$_POST['branch'];
+$phno=$_POST['phno'];
+$gender=$_POST['gender'];
+$email=$_POST['email'];
+
+$sel="INSERT INTO student1(name,rollno,cgpa,branch,phno,gender,email) 
+VALUES('$name','$rollno','$cgpa','$branch','$phno','$gender','$email')";
+
+$result=mysqli_query($dbh,$sel)
+or
+die("Error querying the database");
+
+echo"operation success, please refresh your database";
+?>
+
+#main.php
+<?php
+include("connect.php");
+
+$crttb="CREATE TABLE student2(
+    ID int (6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    rollno VARCHAR(20) NOT NULL,
+    cgpa FLOAT(4,2) NOT NULL,
+    branch VARCHAR(20) NOT NULL,
+    phno INT(10) NOT NULL,
+    gender CHAR(1) NOT NULL,
+    email VARCHAR(20) NOT NULL)";
+
+$result=mysqli_query($dbh,$crttb)
+or
+die("Error querying the database");
+
+echo "<br/>"."table created successfully";
+?>
+
+#forms
+
+<html>
+    <body>
+        <form action="dbaction.php" method="post">
+            NAME: <input type ="text" name="name"><br><br>
+            ROLLNO: <input type ="number" name="rollno"><br><br>
+            CGPA: <input type="float" name="cgpa" step="0.01" min="0" max="10"><br><br>
+            BRANCH: <input type ="text" name="branch"><br><br>
+            PHNO: <input type ="number" name="phno"><br><br>
+            GENDER: <input type ="radio" name="gender" value="M">Male
+                    <input type ="radio" name="gender" value="F">Female<br><br>
+            EMAIL: <input type ="text" name="email"><br><br>
+            <input type="submit">
+        </form>
+<p>Click on the button to access the query</p>
+<input type="button" value="click here" onclick="window.location='testdb.php'">
+    </body>
+</html>
